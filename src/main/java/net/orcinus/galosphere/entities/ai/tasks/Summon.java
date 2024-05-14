@@ -91,11 +91,13 @@ public class Summon extends Behavior<Berserker> {
         }
         brain.eraseMemory(MemoryModuleType.WALK_TARGET);
         List<BlockPos> positions = IntStream.range(0, 5).mapToObj(i -> LandRandomPos.getPos(livingEntity, i * 2, 1)).filter(Objects::nonNull).map(BlockPos::containing).filter(blockPos -> livingEntity.level().getWorldBorder().isWithinBounds(blockPos)).map(BlockPos::below).filter(blockPos -> serverLevel.getBlockState(blockPos).isCollisionShapeFullBlock(serverLevel, blockPos)).toList();
-        BlockPos randomPos = positions.get(serverLevel.getRandom().nextInt(positions.size()));
-        Preserved preserved = GEntityTypes.PRESERVED.get().create(serverLevel, null, null, livingEntity.blockPosition(), MobSpawnType.TRIGGERED, true, true);
-        preserved.moveTo(randomPos.getX(), randomPos.getY() + 1, randomPos.getZ(), 0.0f, 0.0f);
-        preserved.setHealth(preserved.getMaxHealth() * ((float) livingEntity.getRandom().nextInt(4, 7) / 10));
-        serverLevel.addFreshEntityWithPassengers(preserved);
+        if(!positions.isEmpty()) {
+            BlockPos randomPos = positions.get(serverLevel.getRandom().nextInt(positions.size()));
+            Preserved preserved = GEntityTypes.PRESERVED.get().create(serverLevel, null, null, livingEntity.blockPosition(), MobSpawnType.TRIGGERED, true, true);
+            preserved.moveTo(randomPos.getX(), randomPos.getY() + 1, randomPos.getZ(), 0.0f, 0.0f);
+            preserved.setHealth(preserved.getMaxHealth() * ((float) livingEntity.getRandom().nextInt(4, 7) / 10));
+            serverLevel.addFreshEntityWithPassengers(preserved);
+        }
     }
 
     @Override
